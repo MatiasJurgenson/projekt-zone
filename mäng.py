@@ -106,5 +106,3 @@ pyglet.clock.schedule_interval(liikumine, 1 / 120)
 
 if __name__ == '__main__':
     pyglet.app.run()
-
-#test
