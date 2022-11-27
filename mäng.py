@@ -32,21 +32,39 @@ mängija_pilt = pyglet.resource.image("karakter.png")
 vastane1_pilt = pyglet.resource.image("vastane1.png")
 vastane2_pilt = pyglet.resource.image("vastane2.png")
 taust_pilt = pyglet.resource.image("background.png")
+mõõk = pyglet.resource.image("mõõk.png")
 
 def center_image(image):
     #pildi ankur punktis on pili keskkoht mitte alumine vasak nurk
     image.anchor_x = image.width // 2
-    image.anchor_y = image.height // 2
 
 center_image(mängija_pilt)
 center_image(vastane1_pilt)
 center_image(vastane2_pilt)
+center_image(mõõk)
 
 
 
-#                              mängija sprite    x ja y on mägija positsioon ekraanil
-mängija = pyglet.sprite.Sprite(img=mängija_pilt, x=400, y=300)
-vastane = pyglet.sprite.Sprite(img=vastane1_pilt, x=1200, y=300)
+
+class mängija:
+#                                       mängija sprite    x ja y on mägija positsioon ekraanil
+    mängija_sprite = pyglet.sprite.Sprite(img=mängija_pilt, x=400, y=100)
+    elud = 100
+
+
+vastane1_sprite = pyglet.sprite.Sprite(img=vastane1_pilt, x=1200, y=100)
+
+vigastatav = True #kas vastane saab mängijat vigastada
+
+def collision(hero, enemy):
+    if hero.x + 50 > enemy.x -50 and hero.x - 50 < enemy.x + 50:
+        return True
+    return False
+
+def callback(a):
+    global vigastatav
+    vigastatav = True
+    print(a) 
 
 vasakule, paremale = False, False
 
@@ -79,12 +97,19 @@ def on_mouse_press(x, y, buttons, modifiers):
 @game_window.event
 def liikumine(dt):
     global taust_x
-    if vasakule == True and taust_x >= -800 and taust_x < 0:
+    global vigastatav
+    if vasakule and taust_x >= -800 and taust_x < 0:
         taust_x += 5
-        vastane.x += 5
-    elif paremale == True and taust_x > -800 and taust_x <= 0:
+        vastane1_sprite.x += 5
+    elif paremale and taust_x > -800 and taust_x <= 0:
         taust_x -= 5
-        vastane.x -= 5
+        vastane1_sprite.x -= 5
+
+    if collision(mängija.mängija_sprite, vastane1_sprite) and vigastatav:
+        vigastatav = False
+        clock.schedule_once(callback, 2)
+        
+
 
 @game_window.event
 def on_draw():
@@ -98,9 +123,8 @@ def on_draw():
         game_window.clear()
         #joonistab asju 
         taust_pilt.blit(taust_x, 0)
-        print(taust_x)
-        mängija.draw()
-        vastane.draw()
+        mängija.mängija_sprite.draw()
+        vastane1_sprite.draw()
 
 pyglet.clock.schedule_interval(liikumine, 1 / 120)
 
