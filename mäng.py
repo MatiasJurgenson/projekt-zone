@@ -2,6 +2,7 @@ import pyglet
 from pyglet.window import key, Window
 from pyglet import clock
 from pyglet.window import mouse
+from pyglet import shapes
 
 game_window = pyglet.window.Window(800, 600)
 
@@ -11,7 +12,7 @@ class mängu_olekud: #panen siia kõik kohad mis võiks meil olla, ei pea kõiki
     room_2 = 2
     boss = 3
     paus = 4
-    inventory = 5
+    inventory = False
     võitlus = 6
     ruumivahetus = 7
     poemüüa = 8
@@ -35,6 +36,7 @@ taust_pilt = pyglet.resource.image("background.png")
 mõõk = pyglet.resource.image("mõõk.png")
 inventory = pyglet.resource.image("inventory.png")
 
+
 def center_image(image):
     #pildi ankur punktis on pildi keskkoht mitte alumine vasak nurk
     image.anchor_x = image.width // 2
@@ -43,7 +45,7 @@ center_image(mängija_pilt)
 center_image(vastane1_pilt)
 center_image(vastane2_pilt)
 center_image(mõõk)
-center_image(inventory)
+
 
 
 
@@ -52,7 +54,7 @@ class mängija:
     mängija_sprite = pyglet.sprite.Sprite(img=mängija_pilt, x=400, y=100)
     elud = 100
 
-inventory_sprite = pyglet.sprite.Sprite(img=inventory, x=400, y=150)
+inventory_sprite = pyglet.sprite.Sprite(img=inventory, x=100, y=150)
 
 vastane1_sprite = pyglet.sprite.Sprite(img=vastane1_pilt, x=1200, y=100)
 
@@ -79,9 +81,6 @@ def on_key_press(key, modifiers): #Looks for a keypress
         vasakule = True
     elif key == pyglet.window.key.RIGHT or key == pyglet.window.key.D:
         paremale = True
-    elif key == pyglet.window.key.E:
-        vasakule = False
-        paremale = False
 
 @game_window.event
 def on_key_release(key, modifiers):
@@ -92,10 +91,10 @@ def on_key_release(key, modifiers):
         paremale = False
     elif key == pyglet.window.key.ENTER:
         mängu_olek = mängu_olekud.room_1
-    elif key == pyglet.window.key.E:
-        mängu_olek = mängu_olekud.inventory
-        vasakule = False
-        paremale = False
+    elif key == pyglet.window.key.E and mängu_olekud.inventory == False:
+        mängu_olekud.inventory = True
+    elif key == pyglet.window.key.E and mängu_olekud.inventory == True:
+        mängu_olekud.inventory = False
 
 @game_window.event
 def on_mouse_press(x, y, buttons, modifiers):
@@ -134,9 +133,9 @@ def on_draw():
         taust_pilt.blit(taust_x, 0)
         mängija.mängija_sprite.draw()
         vastane1_sprite.draw()
-    elif mängu_olek == mängu_olekud.inventory:
-        inventory_sprite.draw()
-        taust_pilt.opacity = 180
+    
+        if mängu_olek == mängu_olekud.inventory:
+            inventory_sprite.draw()
 
 
 pyglet.clock.schedule_interval(liikumine, 1 / 120)
