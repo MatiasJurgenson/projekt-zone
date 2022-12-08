@@ -43,6 +43,8 @@ taust_pilt = pyglet.resource.image("background.png")
 mõõk = pyglet.resource.image("mõõk.png")
 inventory = pyglet.resource.image("inventory.png")
 
+inventory_sprite = pyglet.sprite.Sprite(img=inventory, x=100, y=150)
+
 
 def center_image(image):
     #pildi ankur punktis on pildi keskkoht mitte alumine vasak nurk
@@ -96,39 +98,45 @@ class Karakter:
             self.mõõga_sprite.draw()
 
 
+class Mängija(Karakter):
+    def collision_karakterid(self, enemy):
+        if self.sprite.x + 50 > enemy.sprite.x -50 and self.sprite.x - 50 < enemy.sprite.x + 50 and self.vigastatav and enemy.elus:
+            return True
+        return False
+
+    def collision_mõõk_vatsane(self, enemy):
+        if self.sprite.x + 50 > enemy.mõõga_sprite.x -75 and self.sprite.x - 50 < enemy.mõõga_sprite.x + 75 and self.vigastatav and enemy.aktiivne_mõõk:
+            return True
+        return False
+
+
+class Vastane(Karakter):
+    def collision_mõõk_mängija(self):
+        if mängija.mõõga_sprite.x + 75 > self.sprite.x -50 and mängija.mõõga_sprite.x - 75 < self.sprite.x + 50 and self.vigastatav and mängija.aktiivne_mõõk:
+            return True
+        return False
+
+
 #                                    mängija sprite    x ja y on mägija positsioon ekraanil
 mängija_sprite = pyglet.sprite.Sprite(img=mängija_pilt, x=400, y=100)
 mängija_mõõk =  pyglet.sprite.Sprite(img=mõõk, x=500, y=200)
-
-mängija = Karakter(mängija_sprite, mängija_mõõk, 100)
-
-inventory_sprite = pyglet.sprite.Sprite(img=inventory, x=100, y=150)
+mängija = Mängija(mängija_sprite, mängija_mõõk, 100)
 
 vastane1_sprite = pyglet.sprite.Sprite(img=vastane1_pilt, x=1200, y=100)
 vastane1_mõõk = pyglet.sprite.Sprite(img=mõõk, x=1100, y=150)
+vastane1 = Vastane(vastane1_sprite, vastane1_mõõk, 100)
 
-vastane1 = Karakter(vastane1_sprite, vastane1_mõõk, 100)
+vastane2_sprite = pyglet.sprite.Sprite(img=vastane2_pilt, x=800, y=100)
+vastane2_mõõk = pyglet.sprite.Sprite(img=mõõk, x=700, y=150)
+vastane2 = Vastane(vastane2_sprite, vastane2_mõõk, 100)
 
 
-#vaja lisada erivatele suurustele objektidele eri mõõdu kontrolli
-def collision_karakterid(hero, enemy):
-    if hero.x + 50 > enemy.x -50 and hero.x - 50 < enemy.x + 50:
-        return True
-    return False
-
-def collision_mõõk_vatsane(mõõk, hero):
-    if hero.x + 50 > mõõk.x -75 and hero.x - 50 < mõõk.x + 75:
-        return True
-    return False
-
-def collision_mõõk_mängija(mõõk, enemy):
-    if mõõk.x + 75 > enemy.x -50 and mõõk.x - 75 < enemy.x + 50:
-        return True
-    return False
+vastased = [vastane1, vastane2]
 
 
 clk = clock.get_default()
 clk.schedule_interval(vastane1.attack, 6)
+clk.schedule_interval(vastane2.attack, 6)
 
 
 
@@ -139,9 +147,9 @@ taust_x = 0
 @game_window.event
 def on_key_press(key, modifiers): #Looks for a keypress
     global vasakule, paremale
-    if key == pyglet.window.key.LEFT or key == pyglet.window.key.A and mängu_olek == mängu_olekud.room_1 and not mängu_olekud.paus:
+    if (key == pyglet.window.key.LEFT or key == pyglet.window.key.A) and mängu_olek == mängu_olekud.room_1 and not mängu_olekud.paus:
         vasakule = True
-    elif key == pyglet.window.key.RIGHT or key == pyglet.window.key.D and mängu_olek == mängu_olekud.room_1 and not mängu_olekud.paus:
+    elif (key == pyglet.window.key.RIGHT or key == pyglet.window.key.D) and mängu_olek == mängu_olekud.room_1 and not mängu_olekud.paus:
         paremale = True
     elif key == pyglet.window.key.SPACE and mängija.aktiivne_mõõk == False and mängu_olek == mängu_olekud.room_1 and not mängu_olekud.paus:
         mängija.attack(1)
@@ -176,28 +184,35 @@ def liikumine(dt):
     global mängu_olek
     if vasakule and taust_x >= -800 and taust_x < 0:
         taust_x += 5
+        #toppi klassi
         vastane1.sprite.x += 5
         vastane1.mõõga_sprite.x += 5
+        vastane2.sprite.x += 5
+        vastane2.mõõga_sprite.x += 5
     elif paremale and taust_x > -800 and taust_x <= 0:
         taust_x -= 5
+        #toppi klassi
         vastane1.sprite.x -= 5
         vastane1.mõõga_sprite.x -= 5
+        vastane2.sprite.x -= 5
+        vastane2.mõõga_sprite.x -= 5
 
 
-    if collision_karakterid(mängija.sprite, vastane1.sprite) and mängija.vigastatav and vastane1.elus:
+    if mängija.collision_karakterid(vastane1):
         print("hit")
         mängija.vigastatav = False
         mängija.hit(20)
 
-    if collision_mõõk_vatsane(vastane1.mõõga_sprite, mängija.sprite) and mängija.vigastatav and vastane1.aktiivne_mõõk:
+    if mängija.collision_mõõk_vatsane(vastane1):
         print("hit")
         mängija.vigastatav = False
         mängija.hit(20)
 
-    if collision_mõõk_mängija(mängija.mõõga_sprite, vastane1.mõõga_sprite) and vastane1.vigastatav and mängija.aktiivne_mõõk:
-        print("hit")
-        vastane1.vigastatav = False
-        vastane1.hit(20)
+    for vastane in vastased:
+        if vastane.collision_mõõk_mängija():
+            print("hit")
+            vastane.vigastatav = False
+            vastane.hit(100)
 
 
     if mängija.elus == False:
@@ -220,6 +235,7 @@ def on_draw():
         taust_pilt.blit(taust_x, 0)
         mängija.joonista()
         vastane1.joonista()
+        vastane2.joonista()
         if mängu_olekud.paus:
             main_menu_info.draw()
         if mängu_olek == mängu_olekud.inventory:
