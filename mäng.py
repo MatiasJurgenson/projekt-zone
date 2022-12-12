@@ -21,6 +21,8 @@ class mängu_olekud: #panen siia kõik kohad mis võiks meil olla, ei pea kõiki
     paus = False
     võitlus = 6
     ruumivahetus = 7
+    ruumivahetus2 = 11
+    ruumivahetus3 = 12
     poemüüa = 8
     mäng_läbi = 9
 
@@ -77,6 +79,17 @@ ruumivahetus = pyglet.text.Label('Sisenete ruumi 2',
                           x=game_window.width//2, y=game_window.height//2,
                           anchor_x='center', anchor_y='center')
 
+ruumivahetus2 = pyglet.text.Label('Sisenete bossi ruumi',
+                          font_name='Times New Roman',
+                          font_size=36,
+                          x=game_window.width//2, y=game_window.height//2,
+                          anchor_x='center', anchor_y='center')
+
+ruumivahetus3 = pyglet.text.Label('Mäng läbi',
+                          font_name='Times New Roman',
+                          font_size=36,
+                          x=game_window.width//2, y=game_window.height//2,
+                          anchor_x='center', anchor_y='center')
 
 
 pyglet.resource.path = ['raamatukogu']
@@ -90,6 +103,7 @@ taust2_pilt = pyglet.resource.image("backlong.png")
 
 mõõk = pyglet.resource.image("mõõk.png")
 inventory = pyglet.resource.image("inventory.png")
+müüja_pilt = pyglet.resource.image("müüja.png")
 
 inventory_sprite = pyglet.sprite.Sprite(img=inventory, x=100, y=150)
 
@@ -122,7 +136,7 @@ class Karakter:
             self.elud -= damage
             #print(self.elud)
             if self.elud <= 0:
-                #print("surnu")
+                #print("surnud")
                 self.elus = False
                 mängija.rahakott += random.randint(10, 20)
                 #print(mängija.rahakott)
@@ -186,7 +200,8 @@ class Vastane(Karakter):
 
 
 
-#                                    mängija sprite    x ja y on mägija positsioon ekraanil
+
+#                                    mängija sprite    x ja y on mängija positsioon ekraanil
 mängija_sprite = pyglet.sprite.Sprite(img=mängija_pilt, x=400, y=100)
 mängija_mõõk =  pyglet.sprite.Sprite(img=mõõk, x=500, y=200)
 mängija = Mängija(mängija_sprite, mängija_mõõk, 100)
@@ -198,6 +213,7 @@ vastane1 = Vastane(vastane1_sprite, vastane1_mõõk, 100)
 vastane2_sprite = pyglet.sprite.Sprite(img=vastane2_pilt, x=800, y=100)
 vastane2_mõõk = pyglet.sprite.Sprite(img=mõõk, x=700, y=150)
 vastane2 = Vastane(vastane2_sprite, vastane2_mõõk, 100)
+
 
 
 inventory_järjend = [mängija.mõõga_sprite, mängija.rahakott]
@@ -217,14 +233,22 @@ def callback_ruumivahetus(dt):
     global mängu_olek
     mängu_olek = mängu_olekud.room_2
 
+def callback_ruumivahetus2(dt):
+    global mängu_olek
+    mängu_olek = mängu_olekud.boss
+
+def callback_ruumivahetus3(dt):
+    global mängu_olek
+    mängu_olek = mängu_olekud.main_menu
+
 @game_window.event
 def on_key_press(key, modifiers): #Looks for a keypress
     global vasakule, paremale, taust_x, taust, mängu_olek
-    if (key == pyglet.window.key.LEFT or key == pyglet.window.key.A) and (mängu_olek == mängu_olekud.room_1 or mängu_olek == mängu_olekud.room_2) and not mängu_olekud.paus:
+    if (key == pyglet.window.key.LEFT or key == pyglet.window.key.A) and (mängu_olek == mängu_olekud.room_1 or mängu_olek == mängu_olekud.room_2 or mängu_olek == mängu_olekud.boss) and not mängu_olekud.paus:
         vasakule = True
-    elif (key == pyglet.window.key.RIGHT or key == pyglet.window.key.D) and (mängu_olek == mängu_olekud.room_1 or mängu_olek == mängu_olekud.room_2) and not mängu_olekud.paus:
+    elif (key == pyglet.window.key.RIGHT or key == pyglet.window.key.D) and (mängu_olek == mängu_olekud.room_1 or mängu_olek == mängu_olekud.room_2 or mängu_olek == mängu_olekud.boss) and not mängu_olekud.paus:
         paremale = True
-    elif key == pyglet.window.key.SPACE and mängija.aktiivne_mõõk == False and (mängu_olek == mängu_olekud.room_1 or mängu_olek == mängu_olekud.room_2) and not mängu_olekud.paus:
+    elif key == pyglet.window.key.SPACE and mängija.aktiivne_mõõk == False and (mängu_olek == mängu_olekud.room_1 or mängu_olek == mängu_olekud.room_2 or mängu_olek == mängu_olekud.boss) and not mängu_olekud.paus:
         mängija.attack(1)
     elif key == pyglet.window.key.P and not mängu_olekud.paus:
         mängu_olekud.paus = True
@@ -234,14 +258,22 @@ def on_key_press(key, modifiers): #Looks for a keypress
         mängu_olek = mängu_olekud.ruumivahetus
         taust_x = 0
         clock.schedule_once(callback_ruumivahetus, 3)
+    elif (key == pyglet.window.key.DOWN or key == pyglet.window.key.S) and mängu_olek == mängu_olekud.room_2 and not mängu_olekud.paus and -taust + 100 >= taust_x:
+        mängu_olek = mängu_olekud.ruumivahetus2
+        taust_x = 0
+        clock.schedule_once(callback_ruumivahetus2, 3)
+    elif (key == pyglet.window.key.DOWN or key == pyglet.window.key.S) and mängu_olek == mängu_olekud.boss and not mängu_olekud.paus and -taust + 100 >= taust_x:
+        mängu_olek = mängu_olekud.ruumivahetus3
+        taust_x = 0
+        clock.schedule_once(callback_ruumivahetus3, 3)
 
 
 @game_window.event
 def on_key_release(key, modifiers):
     global vasakule, paremale, mängu_olek
-    if (key == pyglet.window.key.LEFT or key == pyglet.window.key.A) and (mängu_olek == mängu_olekud.room_1 or mängu_olek == mängu_olekud.room_2):
+    if (key == pyglet.window.key.LEFT or key == pyglet.window.key.A) and (mängu_olek == mängu_olekud.room_1 or mängu_olek == mängu_olekud.room_2 or mängu_olek == mängu_olekud.boss):
         vasakule = False
-    elif (key == pyglet.window.key.RIGHT or key == pyglet.window.key.D) and (mängu_olek == mängu_olekud.room_1 or mängu_olek == mängu_olekud.room_2):
+    elif (key == pyglet.window.key.RIGHT or key == pyglet.window.key.D) and (mängu_olek == mängu_olekud.room_1 or mängu_olek == mängu_olekud.room_2 or mängu_olek == mängu_olekud.boss):
         paremale = False
     elif key == pyglet.window.key.ENTER and mängu_olek == mängu_olekud.main_menu:
         mängu_olek = mängu_olekud.room_1
@@ -311,15 +343,28 @@ def on_draw():
             allaminek.draw()
     
     elif  mängu_olek == mängu_olekud.room_2:
-        taust = taust1_pilt.width // 2
+        taust = taust2_pilt.width // 2
         game_window.clear()
         #joonistab asju 
-        taust1_pilt.blit(taust_x, 0)
+        taust2_pilt.blit(taust_x, 0)
         mängija.joonista()
         if mängu_olek == mängu_olekud.inventory:
             inventory_sprite.draw()
         print(taust_x)
-            
+        if -taust + 100 >= taust_x:
+            allaminek.draw()
+    
+    elif  mängu_olek == mängu_olekud.boss:
+        taust = taust2_pilt.width // 2
+        game_window.clear()
+        #joonistab asju 
+        taust2_pilt.blit(taust_x, 0)
+        mängija.joonista()
+        if mängu_olek == mängu_olekud.inventory:
+            inventory_sprite.draw()
+        print(taust_x)
+        if -taust + 100 >= taust_x:
+            allaminek.draw()
 
     elif mängu_olek == mängu_olekud.mäng_läbi:
         game_window.clear()
@@ -327,6 +372,14 @@ def on_draw():
     elif mängu_olek == mängu_olekud.ruumivahetus:
         game_window.clear()
         ruumivahetus.draw()
+    
+    elif mängu_olek == mängu_olekud.ruumivahetus2:
+        game_window.clear()
+        ruumivahetus2.draw()
+    
+    elif mängu_olek == mängu_olekud.ruumivahetus3:
+        game_window.clear()
+        ruumivahetus3.draw()
 
     if mängu_olekud.paus:
         if mängu_olek == mängu_olekud.main_menu:
