@@ -66,7 +66,7 @@ liikumine_parem_info = pyglet.text.Label('Liikumine paremale (D/parem nool)',
                           font_size=36,
                           x=50, y=100, batch=batch)
 
-allaminek = pyglet.text.Label('Järgimne korrus (vajuta S/nool alla)',
+allaminek = pyglet.text.Label('Järgmine korrus (vajuta S/nool alla)',
                           font_name='Times New Roman',
                           font_size=30,
                           x=game_window.width//2, y=game_window.height//2+100,
@@ -98,10 +98,14 @@ pyglet.resource.reindex()
 mängija_pilt = pyglet.resource.image("karakter.png")
 vastane1_pilt = pyglet.resource.image("vastane1.png")
 vastane2_pilt = pyglet.resource.image("vastane2.png")
-taust1_pilt = pyglet.resource.image("background.png")
-taust2_pilt = pyglet.resource.image("backlong.png")
+vastane3_pilt = pyglet.resource.image("vastane3.png")
+vastane4_pilt = pyglet.resource.image("vastane4.png")
+taust1_pilt = pyglet.resource.image("taust1.png")
+taust2_pilt = pyglet.resource.image("taust2.png")
+taust3_pilt = pyglet.resource.image("taust3.png")
 
 mõõk = pyglet.resource.image("mõõk.png")
+mõõk2 = pyglet.resource.image("mõõk2.png")
 inventory = pyglet.resource.image("inventory.png")
 müüja_pilt = pyglet.resource.image("müüja.png")
 
@@ -115,7 +119,10 @@ def center_image(image):
 center_image(mängija_pilt)
 center_image(vastane1_pilt)
 center_image(vastane2_pilt)
+center_image(vastane3_pilt)
+center_image(vastane4_pilt)
 center_image(mõõk)
+center_image(mõõk2)
 
 
 class Karakter:
@@ -203,26 +210,34 @@ class Vastane(Karakter):
 
 #                                    mängija sprite    x ja y on mängija positsioon ekraanil
 mängija_sprite = pyglet.sprite.Sprite(img=mängija_pilt, x=400, y=100)
-mängija_mõõk =  pyglet.sprite.Sprite(img=mõõk, x=500, y=200)
+mängija_mõõk =  pyglet.sprite.Sprite(img=mõõk, x=500, y=170)
 mängija = Mängija(mängija_sprite, mängija_mõõk, 100)
 
 vastane1_sprite = pyglet.sprite.Sprite(img=vastane1_pilt, x=1200, y=100)
-vastane1_mõõk = pyglet.sprite.Sprite(img=mõõk, x=1100, y=150)
+vastane1_mõõk = pyglet.sprite.Sprite(img=mõõk2, x=1100, y=190)
 vastane1 = Vastane(vastane1_sprite, vastane1_mõõk, 100)
 
 vastane2_sprite = pyglet.sprite.Sprite(img=vastane2_pilt, x=800, y=100)
-vastane2_mõõk = pyglet.sprite.Sprite(img=mõõk, x=700, y=150)
+vastane2_mõõk = pyglet.sprite.Sprite(img=mõõk2, x=700, y=150)
 vastane2 = Vastane(vastane2_sprite, vastane2_mõõk, 100)
 
+vastane3_sprite = pyglet.sprite.Sprite(img=vastane3_pilt, x=800, y=100)
+vastane3_mõõk = pyglet.sprite.Sprite(img=mõõk2, x=700, y=150)
+vastane3 = Vastane(vastane3_sprite, vastane3_mõõk, 100)
 
+vastane4_sprite = pyglet.sprite.Sprite(img=vastane4_pilt, x=800, y=100)
+vastane4_mõõk = pyglet.sprite.Sprite(img=mõõk2, x=700, y=150)
+vastane4 = Vastane(vastane3_sprite, vastane4_mõõk, 100)
 
 inventory_järjend = [mängija.mõõga_sprite, mängija.rahakott]
-vastased = [vastane1, vastane2]
+vastased = [vastane1, vastane2, vastane3, vastane4]
 
 
 clk = clock.get_default()
 clk.schedule_interval(vastane1.attack, 6)
 clk.schedule_interval(vastane2.attack, 6)
+clk.schedule_interval(vastane3.attack, 6)
+clk.schedule_interval(vastane4.attack, 6)
 
 
 
@@ -333,7 +348,7 @@ def on_draw():
         taust = taust2_pilt.width // 2
         game_window.clear()
         #joonistab asju 
-        taust2_pilt.blit(taust_x, 0)
+        taust1_pilt.blit(taust_x, 0)
         mängija.joonista()
         vastane1.joonista()
         vastane2.joonista()
@@ -343,11 +358,13 @@ def on_draw():
             allaminek.draw()
     
     elif  mängu_olek == mängu_olekud.room_2:
-        taust = taust2_pilt.width // 2
+        taust = taust2_pilt.width // 1.36
         game_window.clear()
         #joonistab asju 
         taust2_pilt.blit(taust_x, 0)
         mängija.joonista()
+        vastane3.joonista()
+        vastane4.joonista()
         if mängu_olek == mängu_olekud.inventory:
             inventory_sprite.draw()
         print(taust_x)
@@ -358,7 +375,7 @@ def on_draw():
         taust = taust2_pilt.width // 2
         game_window.clear()
         #joonistab asju 
-        taust2_pilt.blit(taust_x, 0)
+        taust3_pilt.blit(taust_x, 0)
         mängija.joonista()
         if mängu_olek == mängu_olekud.inventory:
             inventory_sprite.draw()
