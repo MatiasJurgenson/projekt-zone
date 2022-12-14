@@ -385,6 +385,7 @@ def on_key_release(key, modifiers):
     #inventory
     elif (key == pyglet.window.key.E and mängu_olekud.inventory == False) and (mängu_olek == mängu_olekud.room_1 or mängu_olek == mängu_olekud.room_2 or mängu_olek == mängu_olekud.boss):
         mängu_olekud.inventory = True
+        #print("E")
     elif (key == pyglet.window.key.E and mängu_olekud.inventory == True) and (mängu_olek == mängu_olekud.room_1 or mängu_olek == mängu_olekud.room_2 or mängu_olek == mängu_olekud.boss):
         mängu_olekud.inventory = False
 
@@ -425,6 +426,12 @@ def liikumine(dt):
         elif mängu_olek == mängu_olekud.room_2:
                 for vastane_2 in vastased[1]:
                     vastane_2.liikuvus(5)
+
+        elif mängu_olek == mängu_olekud.boss:
+                for vastane_3 in vastased[2]:
+                    vastane_3.liikuvus(5)
+
+
     elif paremale and taust_x > -taust and taust_x <= 0:
         taust_x -= 5
 
@@ -437,11 +444,8 @@ def liikumine(dt):
         elif mängu_olek == mängu_olekud.room_2:
                 for vastane_2 in vastased[1]:
                     vastane_2.liikuvus(-5)
-    
-    elif paremale and taust_x > -taust and taust_x <= 0:
-        taust_x -= 5
 
-        if mängu_olek == mängu_olekud.boss:
+        elif mängu_olek == mängu_olekud.boss:
                 for vastane_3 in vastased[2]:
                     vastane_3.liikuvus(-5)
     
@@ -521,7 +525,7 @@ def on_draw():
             vastane2.mõõga_sprite.x = 800
 
         if boss.elus:
-            boss.sprite.x = 1000
+            boss.sprite.x = 1400
             boss.mõõga_sprite.x = 900        
     
 
@@ -535,6 +539,7 @@ def on_draw():
         vastane1.joonista()
         vastane2.joonista()
         poemüüja.joonista()
+        #print(vastane3.mõõga_sprite.x, vastane4.mõõga_sprite.x)
         if mängu_olek == mängu_olekud.inventory:
             inventory_sprite.draw()
         if -taust + 100 >= taust_x:
@@ -551,7 +556,7 @@ def on_draw():
         vastane3.joonista()
         vastane4.joonista()
         poemüüja.joonista()
-        print(mängija.mõõga_võimsus)
+        #print(vastane3.mõõga_sprite.x, vastane4.mõõga_sprite.x)
         if mängu_olek == mängu_olekud.inventory:
             inventory_sprite.draw()
         #print(taust_x)
@@ -579,7 +584,7 @@ def on_draw():
     elif mängu_olek == mängu_olekud.ruumivahetus:
         game_window.clear()
         ruumivahetus.draw()
-        poemüüja.sprite.x = 2100
+        poemüüja.sprite.x = 2000
     
     elif mängu_olek == mängu_olekud.ruumivahetus2:
         game_window.clear()
