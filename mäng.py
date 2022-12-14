@@ -79,12 +79,12 @@ allaminek.color = (0, 0, 0, 255)
 
 
 #poodlemise tekst
-pooldemine = pyglet.text.Label('Poodlemine (vajuta W/nool üles)',
+poodlemine = pyglet.text.Label('Poodlemine (vajuta W/nool üles)',
                           font_name='Times New Roman',
                           font_size=30,
                           x=game_window.width//2, y=game_window.height//2+100,
                           anchor_x='center', anchor_y='center')
-pooldemine.color = (0, 0, 0, 255)
+poodlemine.color = (0, 0, 0, 255)
 
 lahkumine = pyglet.text.Label('Lahkumine (vajuta W/nool üles)',
                           font_name='Times New Roman',
@@ -156,6 +156,7 @@ vastane1_pilt = pyglet.resource.image("vastane1.png")
 vastane2_pilt = pyglet.resource.image("vastane2.png")
 vastane3_pilt = pyglet.resource.image("vastane3.png")
 vastane4_pilt = pyglet.resource.image("vastane4.png")
+boss_pilt = pyglet.resource.image("boss.png")
 taust1_pilt = pyglet.resource.image("taust1.png")
 taust2_pilt = pyglet.resource.image("taust2.png")
 taust3_pilt = pyglet.resource.image("taust3.png")
@@ -177,6 +178,7 @@ center_image(vastane1_pilt)
 center_image(vastane2_pilt)
 center_image(vastane3_pilt)
 center_image(vastane4_pilt)
+center_image(boss_pilt)
 center_image(müüja_pilt)
 center_image(mõõk)
 center_image(mõõk2)
@@ -271,29 +273,34 @@ mängija_sprite = pyglet.sprite.Sprite(img=mängija_pilt, x=400, y=100)
 mängija_mõõk =  pyglet.sprite.Sprite(img=mõõk, x=500, y=170)
 mängija = Mängija(mängija_sprite, mängija_mõõk, 100)
 
-vastane1_sprite = pyglet.sprite.Sprite(img=vastane1_pilt, x=1200, y=100)
-vastane1_mõõk = pyglet.sprite.Sprite(img=mõõk2, x=1100, y=190)
+vastane1_sprite = pyglet.sprite.Sprite(img=vastane1_pilt, x=1300, y=100)
+vastane1_mõõk = pyglet.sprite.Sprite(img=mõõk2, x=1200, y=190)
 vastane1 = Vastane(vastane1_sprite, vastane1_mõõk, 100)
 
-vastane2_sprite = pyglet.sprite.Sprite(img=vastane2_pilt, x=800, y=100)
-vastane2_mõõk = pyglet.sprite.Sprite(img=mõõk2, x=700, y=150)
+vastane2_sprite = pyglet.sprite.Sprite(img=vastane2_pilt, x=900, y=100)
+vastane2_mõõk = pyglet.sprite.Sprite(img=mõõk2, x=800, y=160)
 vastane2 = Vastane(vastane2_sprite, vastane2_mõõk, 100)
 
-vastane3_sprite = pyglet.sprite.Sprite(img=vastane3_pilt, x=800, y=100)
-vastane3_mõõk = pyglet.sprite.Sprite(img=mõõk2, x=700, y=150)
+vastane3_sprite = pyglet.sprite.Sprite(img=vastane3_pilt, x=1000, y=100)
+vastane3_mõõk = pyglet.sprite.Sprite(img=mõõk2, x=900, y=160)
 vastane3 = Vastane(vastane3_sprite, vastane3_mõõk, 200)
 
-vastane4_sprite = pyglet.sprite.Sprite(img=vastane4_pilt, x=1200, y=100)
-vastane4_mõõk = pyglet.sprite.Sprite(img=mõõk2, x=1100, y=150)
+vastane4_sprite = pyglet.sprite.Sprite(img=vastane4_pilt, x=1800, y=100)
+vastane4_mõõk = pyglet.sprite.Sprite(img=mõõk2, x=1700, y=160)
 vastane4 = Vastane(vastane4_sprite, vastane4_mõõk, 200)
 
-poemüüja_sprite = pyglet.sprite.Sprite(img=müüja_pilt, x=1600, y=100)
+boss_sprite = pyglet.sprite.Sprite(img=boss_pilt, x=1000, y=100)
+boss_mõõk = pyglet.sprite.Sprite(img=mõõk2, x=900, y=160)
+boss = Vastane(boss_sprite, boss_mõõk, 200)
+
+poemüüja_sprite = pyglet.sprite.Sprite(img=müüja_pilt, x=1800, y=100)
 poemüüja = Vastane(poemüüja_sprite, vastane4_mõõk, 100)
 
 inventory_järjend = [mängija.mõõga_sprite, mängija.rahakott]
 room1_vastased = [vastane1, vastane2]
 room2_vastased = [vastane3, vastane4]
-vastased = [room1_vastased, room2_vastased]
+room3_vastased = [boss]
+vastased = [room1_vastased, room2_vastased, room3_vastased]
 
 
 clk = clock.get_default()
@@ -301,6 +308,7 @@ clk.schedule_interval(vastane1.attack, 6)
 clk.schedule_interval(vastane2.attack, 6)
 clk.schedule_interval(vastane3.attack, 4)
 clk.schedule_interval(vastane4.attack, 4)
+clk.schedule_interval(boss.attack, 3)
 
 
 
@@ -375,9 +383,9 @@ def on_key_release(key, modifiers):
         mängu_olek = mängu_olekud.room_1
 
     #inventory
-    elif key == pyglet.window.key.E and mängu_olekud.inventory == False:
+    elif (key == pyglet.window.key.E and mängu_olekud.inventory == False) and (mängu_olek == mängu_olekud.room_1 or mängu_olek == mängu_olekud.room_2 or mängu_olek == mängu_olekud.boss):
         mängu_olekud.inventory = True
-    elif key == pyglet.window.key.E and mängu_olekud.inventory == True:
+    elif (key == pyglet.window.key.E and mängu_olekud.inventory == True) and (mängu_olek == mängu_olekud.room_1 or mängu_olek == mängu_olekud.room_2 or mängu_olek == mängu_olekud.boss):
         mängu_olekud.inventory = False
 
     #poemüük
@@ -429,6 +437,15 @@ def liikumine(dt):
         elif mängu_olek == mängu_olekud.room_2:
                 for vastane_2 in vastased[1]:
                     vastane_2.liikuvus(-5)
+    
+    elif paremale and taust_x > -taust and taust_x <= 0:
+        taust_x -= 5
+
+        if mängu_olek == mängu_olekud.boss:
+                for vastane_3 in vastased[2]:
+                    vastane_3.liikuvus(-5)
+    
+    
 
     #collision vaataja
     if poemüüja.collision_mõõk_mängija():
@@ -460,7 +477,17 @@ def liikumine(dt):
                 mängija.hit(25)
 
             
-
+    elif mängu_olek == mängu_olekud.boss:
+        for vastane_3 in vastased[2]:
+            if vastane_3.collision_mõõk_mängija() or poemüüja.collision_mõõk_mängija():
+                #print("hit")
+                vastane_3.vigastatav = False
+                vastane_3.hit(mängija.mõõga_võimsus)
+            
+            if mängija.collision_mõõk_vatsane(vastane_3) or mängija.collision_karakterid(vastane_3):
+                #print("hit")
+                mängija.vigastatav = False
+                mängija.hit(30)
 
     if mängija.elus == False:
         mängu_olek = mängu_olekud.mäng_läbi
@@ -478,20 +505,25 @@ def on_draw():
         main_menu_info.draw()
         #restarib vastaste positsioonid
         if vastane1.elus:
-            vastane1.sprite.x = 1200
-            vastane1.mõõga_sprite.x = 1100
+            vastane1.sprite.x = 1300
+            vastane1.mõõga_sprite.x = 1200
 
         if vastane4.elus:
-            vastane4.sprite.x = 1200
-            vastane4.mõõga_sprite.x = 1100
+            vastane4.sprite.x = 1600
+            vastane4.mõõga_sprite.x = 1500
 
         if vastane3.elus:
-            vastane3.sprite.x = 800
-            vastane3.mõõga_sprite.x = 700
+            vastane3.sprite.x = 1000
+            vastane3.mõõga_sprite.x = 900
 
         if vastane2.elus:
-            vastane2.sprite.x = 800
-            vastane2.mõõga_sprite.x = 700
+            vastane2.sprite.x = 900
+            vastane2.mõõga_sprite.x = 800
+
+        if boss.elus:
+            boss.sprite.x = 1000
+            boss.mõõga_sprite.x = 900        
+    
 
     
     elif  mängu_olek == mängu_olekud.room_1:
@@ -508,7 +540,7 @@ def on_draw():
         if -taust + 100 >= taust_x:
             allaminek.draw()
         if mängija.collision_karakterid(poemüüja):
-            pooldemine.draw()
+            poodlemine.draw()
     
     elif  mängu_olek == mängu_olekud.room_2:
         taust = taust2_pilt.width - 800
@@ -526,7 +558,7 @@ def on_draw():
         if -taust + 100 >= taust_x:
             allaminek.draw()
         if mängija.collision_karakterid(poemüüja):
-            pooldemine.draw()
+            poodlemine.draw()
     
     elif  mängu_olek == mängu_olekud.boss:
         taust = taust2_pilt.width - 800
@@ -534,6 +566,7 @@ def on_draw():
         #joonistab asju 
         taust3_pilt.blit(taust_x, 0)
         mängija.joonista()
+        boss.joonista()
         if mängu_olek == mängu_olekud.inventory:
             inventory_sprite.draw()
         #print(taust_x)
@@ -546,11 +579,12 @@ def on_draw():
     elif mängu_olek == mängu_olekud.ruumivahetus:
         game_window.clear()
         ruumivahetus.draw()
-        poemüüja.sprite.x = 2000
+        poemüüja.sprite.x = 2100
     
     elif mängu_olek == mängu_olekud.ruumivahetus2:
         game_window.clear()
         ruumivahetus2.draw()
+        poemüüja.sprite.x = 2100
     
     elif mängu_olek == mängu_olekud.ruumivahetus3:
         game_window.clear()
