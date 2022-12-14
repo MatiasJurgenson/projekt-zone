@@ -526,7 +526,7 @@ def on_draw():
 
         if boss.elus:
             boss.sprite.x = 1400
-            boss.mõõga_sprite.x = 900        
+            boss.mõõga_sprite.x = 1300        
     
 
     
